@@ -8,11 +8,13 @@ I2C_HandleTypeDef *i2c;
 static uint8_t B2D(uint8_t bcd);
 static uint8_t D2B(uint8_t decimal);
 
-void DS3231_Init(I2C_HandleTypeDef *handle){
+void DS3231_Init(I2C_HandleTypeDef *handle)
+{
   i2c = handle;
 }
 
-bool DS3231_GetTime(_RTC *rtc){
+bool DS3231_GetTime(_RTC *rtc)
+{
   uint8_t startAddr = DS3231_REG_TIME;
   uint8_t buffer[7] = {0,};
 
@@ -30,7 +32,8 @@ bool DS3231_GetTime(_RTC *rtc){
   return true;
 }
 
-bool DS3231_SetTime(_RTC *rtc){
+bool DS3231_SetTime(_RTC *rtc)
+{
   uint8_t startAddr = DS3231_REG_TIME;
   uint8_t buffer[8] = {startAddr, D2B(rtc->Sec), D2B(rtc->Min), D2B(rtc->Hour), rtc->DaysOfWeek, D2B(rtc->Date), D2B(rtc->Month), D2B(rtc->Year)};
   if(HAL_I2C_Master_Transmit(i2c, DS3231_ADDR, buffer, sizeof(buffer), HAL_MAX_DELAY) != HAL_OK) return false;
@@ -38,7 +41,8 @@ bool DS3231_SetTime(_RTC *rtc){
   return true;
 }
 
-bool DS3231_ReadTemperature(float *temp){
+bool DS3231_ReadTemperature(float *temp)
+{
   uint8_t startAddr = DS3231_REG_TEMP;
   uint8_t buffer[2] = {0,};
 
@@ -52,13 +56,15 @@ bool DS3231_ReadTemperature(float *temp){
   return true;
 }
 
-bool DS3231_SetAlarm(uint8_t mode, uint8_t date, uint8_t hour, uint8_t min, uint8_t sec){
+bool DS3231_SetAlarm(uint8_t mode, uint8_t date, uint8_t hour, uint8_t min, uint8_t sec)
+{
   uint8_t alarmSecond = D2B(sec);
   uint8_t alarmMinute = D2B(min);
   uint8_t alarmHour = D2B(hour);
   uint8_t alarmDate = D2B(date);
 
-  switch(mode){
+  switch(mode)
+  {
   case ALARM_MODE_ALL_MATCHED:
     break;
   case ALARM_MODE_HOUR_MIN_SEC_MATCHED:
@@ -98,7 +104,8 @@ bool DS3231_SetAlarm(uint8_t mode, uint8_t date, uint8_t hour, uint8_t min, uint
   return true;
 }
 
-bool DS3231_ClearAlarm(void){
+bool DS3231_ClearAlarm(void)
+{
   uint8_t ctrlReg;
   uint8_t statusReg;
 
@@ -115,24 +122,28 @@ bool DS3231_ClearAlarm(void){
   return true;
 }
 
-bool ReadRegister(uint8_t regAddr, uint8_t *value){
+bool ReadRegister(uint8_t regAddr, uint8_t *value)
+{
   if(HAL_I2C_Master_Transmit(i2c, DS3231_ADDR, &regAddr, 1, HAL_MAX_DELAY) != HAL_OK) return false;
   if(HAL_I2C_Master_Receive(i2c, DS3231_ADDR, value, 1, HAL_MAX_DELAY) != HAL_OK) return false;
 
   return true;
 }
 
-bool WriteRegister(uint8_t regAddr, uint8_t value){
+bool WriteRegister(uint8_t regAddr, uint8_t value)
+{
   uint8_t buffer[2] = {regAddr, value};
   if(HAL_I2C_Master_Transmit(i2c, DS3231_ADDR, buffer, sizeof(buffer), HAL_MAX_DELAY) != HAL_OK) return false;
 
   return true;
 }
 
-static uint8_t B2D(uint8_t bcd){
+static uint8_t B2D(uint8_t bcd)
+{
   return (bcd >> 4) * 10 + (bcd & 0x0F);
 }
 
-static uint8_t D2B(uint8_t decimal){
+static uint8_t D2B(uint8_t decimal)
+{
   return (((decimal / 10) << 4) | (decimal % 10));
 }

@@ -1,6 +1,7 @@
 #ifndef STM32_DS3231_H_
 #define STM32_DS3231_H_
 
+#include "main.h"
 #include <stdlib.h>
 #include <stdbool.h>
 
