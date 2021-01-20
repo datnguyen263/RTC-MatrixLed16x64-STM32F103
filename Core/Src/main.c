@@ -66,7 +66,7 @@ static void MX_I2C2_Init(void);
 _RTC rtc = {
     .Year = 20, .Month = 12, .Date = 16,
     .DaysOfWeek = THURSDAY,
-    .Hour = 15, .Min = 00, .Sec = 00
+    .Hour = 15, .Min = 04, .Sec = 00
 };
 
 uint8_t regVal;
@@ -117,35 +117,53 @@ uint8_t convert_font_num_max(uint8_t n){
 	return tmp;
 }
 void write_rtc_max(_RTC rtc){
-	uint8_t H_a, H_b, M_a, M_b, S_a, S_b, D_a, D_b, Mo_a, Mo_b, Y_a, Y_b;
+	uint8_t H_a, H_b, M_a, M_b, S_a, S_b;
 	H_a = split_2_frontnumber(rtc.Hour);
 	H_b = split_2_backnumber(rtc.Hour);
 	M_a = split_2_frontnumber(rtc.Min);
 	M_b = split_2_backnumber(rtc.Min);
 	S_a = split_2_frontnumber(rtc.Sec);
 	S_b = split_2_backnumber(rtc.Sec);
+
+	write_char(convert_font_num_max(H_a), 4);
+	write_char(convert_font_num_max(H_b), 3);
+	write_char(convert_font_num_max(M_a), 2);
+	write_char(convert_font_num_max(M_b), 1);
+
+
+	write_char(convert_font_num_max(S_a), 7);
+	write_char(convert_font_num_max(S_b), 6);
+	
+	
+}
+void max_off (){
+		write_char(0, 1);
+		write_char(0, 2);
+		write_char(0, 3);
+		write_char(0, 4);
+		write_char(0, 5);
+		write_char(0, 6);
+		write_char(0, 7);
+		write_char(0, 8);
+}
+void write_rtc_max_date(_RTC rtc){
+	uint8_t D_a, D_b, Mo_a, Mo_b, Y_a, Y_b;
+	
 	D_a = split_2_frontnumber(rtc.Date);
 	D_b = split_2_backnumber(rtc.Date);
 	Mo_a = split_2_frontnumber(rtc.Month);
 	Mo_b = split_2_backnumber(rtc.Month);
 	Y_a = split_2_frontnumber(rtc.Year);
 	Y_b = split_2_backnumber(rtc.Year);
-	write_char(convert_font_num_max(H_a), 16);
-	write_char(convert_font_num_max(H_b), 15);
-	write_char(58, 14);
-	write_char(convert_font_num_max(M_a), 13);
-	write_char(convert_font_num_max(M_b), 12);
-	write_char(58, 11);
-	write_char(convert_font_num_max(S_a), 10);
-	write_char(convert_font_num_max(S_b), 9);
-	write_char(convert_font_num_max(D_a), 8);
-	write_char(convert_font_num_max(D_b), 7);
-	write_char('/', 6);
-	write_char(convert_font_num_max(Mo_a), 5);
-	write_char(convert_font_num_max(Mo_b), 4);
-	write_char('/', 3);
-	write_char(convert_font_num_max(Y_a), 2);
-	write_char(convert_font_num_max(Y_b), 1);
+
+	write_char(convert_font_num_max(D_a), 4);
+	write_char(convert_font_num_max(D_b), 3);
+
+	write_char(convert_font_num_max(Mo_a), 2);
+	write_char(convert_font_num_max(Mo_b), 1);
+
+	write_char(convert_font_num_max(Y_a), 7);
+	write_char(convert_font_num_max(Y_b), 6);
 	
 }
 /* USER CODE END 0 */
@@ -242,8 +260,22 @@ int main(void)
       regVal &= ~DS3231_STA_A1F;
       WriteRegister(DS3231_REG_STATUS, regVal);
     }
-		write_rtc_max(rtc);
-		HAL_Delay(100);
+		if(rtc.Sec==39){
+			max_clear();
+			write_rtc_max_date(rtc);
+			HAL_Delay(5000);
+			max_clear();
+
+		}
+		else if (rtc.Min %5 == 0){		
+			max_clear();
+			scroll_string((uint8_t *) "Nguyen Thien Dat   ", 5, left);
+			HAL_Delay(1000);
+			max_clear();
+		}
+		else {
+			write_rtc_max(rtc);
+		}
 		
   }
   /* USER CODE END 3 */
