@@ -418,6 +418,16 @@
               <FileType>1</FileType>
               <FilePath>../Core/Src/stm32f1xx_hal_msp.c</FilePath>
             </File>
+            <File>
+              <FileName>max_matrix_stm32.h</FileName>
+              <FileType>5</FileType>
+              <FilePath>..\Core\Inc\max_matrix_stm32.h</FilePath>
+            </File>
+            <File>
+              <FileName>max_matrix_stm32.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\Core\Src\max_matrix_stm32.c</FilePath>
+            </File>
           </Files>
         </Group>
         <Group>

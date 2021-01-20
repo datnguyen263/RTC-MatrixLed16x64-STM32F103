@@ -10,7 +10,7 @@
 
 
 // Set the number of dot-matrix-displays being used
-#define num 16
+#define num 8
 
 
 #define bitRead(value, bit) (((value) >> (bit)) & 0x01)
