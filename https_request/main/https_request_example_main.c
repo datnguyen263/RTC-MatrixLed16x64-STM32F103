@@ -40,13 +40,14 @@
 #include "lwip/netdb.h"
 #include "lwip/dns.h"
 
-#include "esp_tls.h"
+// To enable the bundle when using ESP-TLS simply pass the function pointer to the bundle attach function
+#include "esp_tls.h" 
 #include "esp_crt_bundle.h"
 
 /* Constants that aren't configurable in menuconfig */
-#define WEB_SERVER "www.nytimes.com"
+#define WEB_SERVER "www.openweathermap.org"
 #define WEB_PORT "443"
-#define WEB_URL "https://www.nytimes.com/2021/01/16/world/europe/variant-coronavirus-genetic-sequence.html"
+#define WEB_URL "https://api.openweathermap.org/data/2.5/weather?q=hanoi&appid=b7b64617873dbb40da91233b1ee51e18"
 
 static const char *TAG = "example";
 
@@ -61,10 +62,12 @@ static void https_get_task(void *pvParameters)
     int ret, len;
 
     while(1) {
+        // enable the bundle when using ESP-TLS
         esp_tls_cfg_t cfg = {
             .crt_bundle_attach = esp_crt_bundle_attach,
         };
 
+        // structure for TLS server verification. If no option is selected then client will return a fatal error by default at the time of the TLS connection setup.
         struct esp_tls *tls = esp_tls_conn_http_new(WEB_URL, &cfg);
 
         if(tls != NULL) {
@@ -126,7 +129,7 @@ static void https_get_task(void *pvParameters)
         static int request_count;
         ESP_LOGI(TAG, "Completed %d requests", ++request_count);
 
-        for(int countdown = 10; countdown >= 0; countdown--) {
+        for(int countdown = 600; countdown >= 0; countdown--) {
             ESP_LOGI(TAG, "%d...", countdown);
             vTaskDelay(1000 / portTICK_PERIOD_MS);
         }
