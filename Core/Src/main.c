@@ -264,6 +264,7 @@ int main(void)
 			max_clear();
 			write_rtc_max_date(rtc);
 			HAL_Delay(5000);
+			max_clear();
 
 		}
 		else if (rtc.Min %5 == 0){		
